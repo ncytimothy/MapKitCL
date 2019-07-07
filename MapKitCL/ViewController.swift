@@ -9,12 +9,15 @@
 import UIKit
 import MapKit
 
-class ViewController: UIViewController, CLLocationManagerDelegate {
+class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
+    
     
     let mapView: MKMapView = {
         let mapView = MKMapView()
         return mapView
     }()
+    
+    var currentLocation: CLLocation?
     
     let currentLocationButton: UIButton = {
         let button = UIButton(type: .system)
@@ -93,8 +96,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     // Receiving location updates when location changes
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         let lastLocation = locations.last!
-        mapView.region.center = CLLocationCoordinate2D(latitude: lastLocation.coordinate.latitude, longitude: lastLocation.coordinate.longitude)
-        mapView.region.span = .init(latitudeDelta: 0.01, longitudeDelta: 0.01)
+        currentLocation = lastLocation
+        setCurrentLocationMapRegion(lastLocation)
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
@@ -107,6 +110,19 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     @objc func updateToCurrentLocation() {
         locationManager.requestLocation()
+        guard let currentLocation = currentLocation else { return }
+        setCurrentLocationMapRegion(currentLocation)
+    }
+    
+    fileprivate func setCurrentLocationMapRegion(_ lastLocation: CLLocation) {
+        mapView.showsUserLocation = true
+        mapView.region.center = CLLocationCoordinate2D(latitude: lastLocation.coordinate.latitude, longitude: lastLocation.coordinate.longitude)
+        mapView.region.span = .init(latitudeDelta: 0.01, longitudeDelta: 0.01)
+    }
+    
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        let annotation = mapView.dequeueReusableAnnotationView(withIdentifier: "annotation") as! MKAnnotationView
+        return annotation
     }
 
     override func viewDidLoad() {
