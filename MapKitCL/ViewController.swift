@@ -21,8 +21,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     
     let currentLocationButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Current Location", for: .normal)
-        button.backgroundColor = .white
+        button.setImage(#imageLiteral(resourceName: "LocationArrow"), for: .normal)
+        button.backgroundColor = UIColor(white: 1.0, alpha: 0.9)
         button.addTarget(self, action: #selector(updateToCurrentLocation), for: .touchUpInside)
         return button
     }()
@@ -133,6 +133,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         
         mapView.fillSuperview()
         currentLocationButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: nil, bottom: nil, trailing: view.safeAreaLayoutGuide.trailingAnchor, padding: .init(top: 16, left: 0, bottom: 0, right: 16))
+        currentLocationButton.constrainWidth(constant: 40)
+        currentLocationButton.constrainHeight(constant: 40)
+        currentLocationButton.layer.cornerRadius = 5
         enableBasicLocationServices()
     }
 
